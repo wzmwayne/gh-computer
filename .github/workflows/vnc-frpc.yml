@@ -29,14 +29,17 @@ jobs:
       
       - name: Configure and start VNC server
         run: |
+          # Add TightVNC to PATH
+          $env:PATH += ";C:\Program Files\TightVNC"
+          
           # Set VNC password
           echo "Set VNC password to 'vncpass123'"
           "vncpass123`nvncpass123" | Out-File -FilePath vncpassword.txt -Encoding ASCII
           
           # Start VNC server (display 1, port 5901)
-          tvnserver.exe -run -display 1
-          Get-Content vncpassword.txt | tvnserver.exe -control -display 1 -setpassword
-          tvnserver.exe -control -display 1 -start
+          & "C:\Program Files\TightVNC\tvnserver.exe" -run -display 1
+          Get-Content vncpassword.txt | & "C:\Program Files\TightVNC\tvnserver.exe" -control -display 1 -setpassword
+          & "C:\Program Files\TightVNC\tvnserver.exe" -control -display 1 -start
       
       - name: Start websockify and noVNC (port 6080)
         run: |
