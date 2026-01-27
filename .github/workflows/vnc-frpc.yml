@@ -41,10 +41,10 @@ jobs:
           Get-Content vncpassword.txt | & "C:\Program Files\TightVNC\tvnserver.exe" -control -display 1 -setpassword
           & "C:\Program Files\TightVNC\tvnserver.exe" -control -display 1 -start
       
-      - name: Start websockify and noVNC (port 6080)
+      - name: Start websockify and noVNC (port 6666)
         run: |
-          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "-m", "websockify", "--web=noVNC", "6080", "localhost:5901"
-          echo "noVNC started on port 6080"
+          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "-m", "websockify", "--web=noVNC", "6666", "localhost:5901"
+          echo "noVNC started on port 6666"
       
       - name: Start frpc
         run: |
