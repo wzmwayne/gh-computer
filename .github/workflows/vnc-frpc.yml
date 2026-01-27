@@ -31,12 +31,11 @@ jobs:
         run: |
           # Set VNC password
           echo "Set VNC password to 'vncpass123'"
-          echo "vncpass123" > vncpassword.txt
-          echo "vncpass123" >> vncpassword.txt
+          "vncpass123`nvncpass123" | Out-File -FilePath vncpassword.txt -Encoding ASCII
           
           # Start VNC server (display 1, port 5901)
           tvnserver.exe -run -display 1
-          tvnserver.exe -control -display 1 -setpassword < vncpassword.txt
+          Get-Content vncpassword.txt | tvnserver.exe -control -display 1 -setpassword
           tvnserver.exe -control -display 1 -start
       
       - name: Start websockify and noVNC (port 6080)
