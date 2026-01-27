@@ -48,13 +48,19 @@ jobs:
       
       - name: Start frpc
         run: |
-          $frpcPath = ".\Kairo-3.2.1-Release.1-win-x64\frpc.exe"
-          if (Test-Path $frpcPath) {
+          # List contents to find the executable
+          Write-Host "Contents of Kairo directory:"
+          Get-ChildItem -Path ".\Kairo-3.2.1-Release.1-win-x64" -Recurse | Select-Object Name, FullName
+          
+          # Try to find frpc.exe or Kairo.exe
+          $frpcPath = Get-ChildItem -Path ".\Kairo-3.2.1-Release.1-win-x64" -Recurse -Filter "*.exe" | Select-Object -First 1 -ExpandProperty FullName
+          
+          if ($frpcPath) {
+            Write-Host "Found executable: $frpcPath"
             Start-Process -NoNewWindow -FilePath $frpcPath -ArgumentList "-u 0d95d73cf3f43405dd793090a0e0210259655a4d -t 7350"
             echo "frpc started"
           } else {
-            Write-Error "frpc.exe not found at $frpcPath"
-            Get-ChildItem -Path ".\Kairo-3.2.1-Release.1-win-x64" -Recurse | Select-Object FullName
+            Write-Error "No executable found in Kairo directory"
             exit 1
           }
       
