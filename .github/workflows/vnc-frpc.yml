@@ -14,8 +14,8 @@ jobs:
       - name: Download Kairo (frpc)
         run: |
           mkdir Kairo-3.2.1-Release.1-win-x64
-          curl -L -o frpc.zip https://github.com/Shiroiame-Kusu/Kairo/releases/download/v3.2.1-Release.1/Kairo-3.2.1-Release.1-win-x64.zip
-          tar -xf frpc.zip -C Kairo-3.2.1-Release.1-win-x64
+          Invoke-WebRequest -Uri "https://github.com/Shiroiame-Kusu/Kairo/releases/download/v3.2.1-Release.1/Kairo-3.2.1-Release.1-win-x64.zip" -OutFile "frpc.zip"
+          Expand-Archive -Path "frpc.zip" -DestinationPath "Kairo-3.2.1-Release.1-win-x64"
       
       - name: Install TightVNC
         run: |
