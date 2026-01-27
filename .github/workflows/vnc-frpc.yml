@@ -1,0 +1,56 @@
+name: VNC and FRPC Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup-vnc-frpc:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Download Kairo (frpc)
+        run: |
+          mkdir Kairo-3.2.1-Release.1-win-x64
+          curl -L -o frpc.zip https://github.com/Shiroiame-Kusu/Kairo/releases/download/v3.2.1-Release.1/Kairo-3.2.1-Release.1-win-x64.zip
+          tar -xf frpc.zip -C Kairo-3.2.1-Release.1-win-x64
+      
+      - name: Install TightVNC
+        run: |
+          choco install tightvnc -y
+      
+      - name: Install noVNC and websockify
+        run: |
+          pip install websockify
+          git clone https://github.com/novnc/noVNC.git
+          git clone https://github.com/novnc/websockify.git
+      
+      - name: Configure and start VNC server
+        run: |
+          # Set VNC password
+          echo "Set VNC password to 'vncpass123'"
+          echo "vncpass123" > vncpassword.txt
+          echo "vncpass123" >> vncpassword.txt
+          
+          # Start VNC server (display 1, port 5901)
+          tvnserver.exe -run -display 1
+          tvnserver.exe -control -display 1 -setpassword < vncpassword.txt
+          tvnserver.exe -control -display 1 -start
+      
+      - name: Start websockify and noVNC (port 6080)
+        run: |
+          Start-Process -NoNewWindow -FilePath "python" -ArgumentList "websockify/websockify.py --web=noVNC 6080 localhost:5901"
+          echo "noVNC started on port 6080"
+      
+      - name: Start frpc
+        run: |
+          cd Kairo-3.2.1-Release.1-win-x64
+          Start-Process -NoNewWindow -FilePath ".\frpc.exe" -ArgumentList "-u 0d95d73cf3f43405dd793090a0e0210259655a4d -t 7350"
+          echo "frpc started"
+      
+      - name: Keep workflow running
+        run: |
+          echo "Services are running. Workflow will sleep to keep them alive."
+          Start-Sleep -Seconds 3600
